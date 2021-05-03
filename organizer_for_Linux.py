@@ -3,55 +3,58 @@ import glob
 import os
 import subprocess
 
-default_dir = ["DESKTOP", "DOWNLOAD", "TEMPLATES", "PUBLICSHARE", "DOCUMENTS", "MUSIC", "PICTURES", "VIDEOS"]
+# 'extensions': ['.egg-info', '.epp', '.oog', '.p', '.p4a', '.pickle', '.pil', '.pth', '.py', '.pyc', '.pyd', '.pyo', '.pyt', '.pyw', '.pyz', '.pyzw', '.rpy', '.ssdf', '.whl', '.yaml'],
+
+default_dir = ["DOWNLOAD", "DOCUMENTS", "MUSIC", "PICTURES", "VIDEOS"]
 
 class Organizer:
 
     def __init__(self, directories=None):
-        # Set self.directories only if a list is passed
-        if isinstance(directories, list):
-            self.directories = []
-            for i in directories:
-                if os.path.exists(i) and os.path.isdir(i):
-                    self.directories.append(i)
-        # Check if a list is passed and make an empty list if not
-        elif isinstance(directories, type(None)):
-            self.directories = []
-        else:
-            raise Exception("Error: `directories` must be a list")
-
-        # Execute system command to get the paths for the default directories 
-        for i in default_dir:
-            output = subprocess.check_output(['xdg-user-dir', i])
-            output = output.decode("utf-8").rstrip()
-            self.directories.append(output)
-
-        print(self.directories)
+        # Default extensions for every direcory
+        default_types = [
+            {
+                'name': 'DOCUMENTS',
+                'directory': '',
+                'extensions': ['.doc', '.docx', '.log', '.msg', '.odt', '.pages', '.rtf', '.tex', '.txt', '.wpd', '.wps'],
+            },
+            {
+                'name': 'MUSIC',
+                'directory': '',
+                'extensions': ['.aif', '.aac', '.iff', '.m3u', '.m4a', '.mid', '.mp3', '.mpa', '.wav', '.wma'],
+            },
+            {
+                'name': 'VIDEOS',
+                'directory': '',
+                'extensions': ['.3g2', '.3gp', '.asf', '.avi', '.flv', '.m4v', '.mov', '.mp4', '.mpg', '.rm', '.srt', '.swf', '.vob', '.wmv'],
+            },
+            {
+                'name': 'PICTURES',
+                'directory': '',
+                'extensions': ['.3dm', '.3ds', '.max', '.obj', '.bmp', '.dds', '.gif', '.heic', '.jpg', '.png', '.psp', '.pspimage', '.tga', '.thm', '.tif', '.tiff', '.yuv', '.ai', '.eps', '.svg'],
+            },
+        ]
+        # Find the xdg path for the default directories
+        self.default_types = default_types
+        for i in self.default_types:
+            dir_path = subprocess.check_output(['xdg-user-dir', i['name']]) # Use system call to get the xdg dir path
+            dir_path = dir_path.decode("utf-8").rstrip()
+            i["directory"] = dir_path
 
     def get_directory(self):
         pass
 
-types = [
+    def initialize_config(self):
+        with open("config.py", "w+") as config:
+            config.write("""
+extra_paths = [
     {
-        'directory': '/home/pi/Documents/',
-        'extensions': ['.doc', '.docx', '.log', '.msg', '.odt', '.pages', '.rtf', '.tex', '.txt', '.wpd', '.wps'],
-    },
-    {
-        'directory': '/home/pi/Music/',
-        'extensions': ['.aif', '.aac', '.iff', '.m3u', '.m4a', '.mid', '.mp3', '.mpa', '.wav', '.wma'],
-    },
-    {'directory': '/home/pi/Videos/',
-        'extensions': ['.3g2', '.3gp', '.asf', '.avi', '.flv', '.m4v', '.mov', '.mp4', '.mpg', '.rm', '.srt', '.swf', '.vob', '.wmv'],
-    },
-    {
-        'directory': '/home/pi/Pictures/',
-        'extensions': ['.3dm', '.3ds', '.max', '.obj', '.bmp', '.dds', '.gif', '.heic', '.jpg', '.png', '.psp', '.pspimage', '.tga', '.thm', '.tif', '.tiff', '.yuv', '.ai', '.eps', '.svg'],
-    },
-    {
-        'directory': '/home/pi/Python/',
-        'extensions': ['.egg-info', '.epp', '.oog', '.p', '.p4a', '.pickle', '.pil', '.pth', '.py', '.pyc', '.pyd', '.pyo', '.pyt', '.pyw', '.pyz', '.pyzw', '.rpy', '.ssdf', '.whl', '.yaml'],
-    },
+        'name': "",
+        'directory': "",
+        'extensions': "",
+    }
 ]
+""")
+
 
 def move():
     for i in types:
