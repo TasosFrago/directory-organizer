@@ -6,8 +6,6 @@ import subprocess
 homedir = os.path.expanduser("~")
 configdir = os.path.join(homedir, ".config")
 
-# 'extensions': ['.egg-info', '.epp', '.oog', '.p', '.p4a', '.pickle', '.pil', '.pth', '.py', '.pyc', '.pyd', '.pyo', '.pyt', '.pyw', '.pyz', '.pyzw', '.rpy', '.ssdf', '.whl', '.yaml'],
-
 default_dir = ["DOWNLOAD", "DOCUMENTS", "MUSIC", "PICTURES", "VIDEOS"]
 
 class Organizer:
@@ -48,14 +46,15 @@ class Organizer:
     def initialize_config(self):
         config_path = os.path.join(configdir, "directory_organizer")
         config_file = os.path.join(config_path, "config.py")
+        config_proj_path = "config.py"
         if os.path.exists(os.path.join(config_path)):
             if os.path.isfile(config_file):
                 print("Configuration file already exists")
             else:
-                shutil.copyfile("config.py", config_file)
+                shutil.copyfile(config_proj_path, config_file)
         else:
             os.mkdir(config_path)
-            shutil.copyfile("config.py", config_file)
+            shutil.copyfile(config_proj_path, config_file)
 
 
 # def move():
@@ -69,4 +68,3 @@ if __name__=='__main__':
     li = ["/home/tasos/projects/test/directory-organizer/test", "/home/tasos/downloads"]
     test = Organizer(li)
     test.initialize_config()
-    print(os.path.realpath("./config.py"))
